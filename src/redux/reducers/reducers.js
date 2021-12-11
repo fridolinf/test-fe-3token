@@ -2,6 +2,7 @@ const initialState = {
 	data: [],
 	loading: false,
 	error: null,
+	oneData: {},
 };
 
 const dataReducers = (state = initialState, action) => {
@@ -30,11 +31,18 @@ const dataReducers = (state = initialState, action) => {
 			return {
 				loading: false,
 				data: state.data.filter((item) => item.id !== action.id),
+				error: null,
 			};
-		case 'CHANGE_ISACTIVE_SUCCESS':
+		case 'UPDATE_DATA_REQUEST':
+			return {
+				...state,
+				loading: true,
+			};
+		case 'UPDATE_DATA_SUCCESS':
 			return {
 				...state,
 				loading: false,
+				oneData: {},
 				error: null,
 			};
 	}

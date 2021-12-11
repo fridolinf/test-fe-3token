@@ -18,8 +18,6 @@ export const addData = (data) => {
 	};
 };
 
-//Is Active
-
-export const changeIsActive = (id) => {
-	return { type: 'REQUEST_CHANGE_ISACTIVE', id };
+export const updateData = (data, id) => {
+	return { type: 'UPDATE_DATA_REQUEST', payload: data, id };
 };

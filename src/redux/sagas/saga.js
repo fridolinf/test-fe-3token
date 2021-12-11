@@ -13,7 +13,6 @@ function* getData() {
 		yield put({ type: 'GET_DATA_SUCCESS', payload: res.data });
 	} catch (e) {
 		console.log(e);
-		console.log('errerr', e.res.data.message);
 	}
 }
 function* addData(actions) {
@@ -29,30 +28,33 @@ function* addData(actions) {
 	}
 }
 function* delData(actions) {
-	const { payload } = actions;
-	try {
-		const res = yield axios.delete(`${api.delProducts}/${payload}`);
-		yield put({ type: 'DELETE_DATA_SUCCESS', id: payload });
-		yield* getData();
-	} catch (e) {
-		console.log(e);
-	}
-}
-//blom dicoba
-function* changeIsActive(action) {
-	let param = JSON.stringify(action.payload);
+	let data = { isActive: false };
 	try {
 		const res = yield axios.put(
-			`${api.accVerifikasi(action.id)}`,
-			param,
-
+			`${api.updateProducts(actions.payload.id)}`,
+			data,
 			{
 				headers: {
 					'Content-Type': 'application/json',
 				},
 			}
 		);
-		yield put({ type: 'CHANGE_ISACTIVE_SUCCESS', payload: res.data });
+		yield* getData();
+	} catch (e) {
+		console.log(e);
+	}
+}
+//blom dicoba
+function* updateData(actions) {
+	let data = actions.payload;
+	try {
+		const res = yield axios.put(`${api.updateProducts(actions.id)}`, data, {
+			headers: {
+				'Content-Type': 'application/json',
+			},
+		});
+		yield put({ type: 'UPDATE_DATA_SUCCESS', payload: res.data });
+		yield* getData();
 	} catch (e) {
 		console.log(e);
 	}
@@ -68,6 +70,6 @@ export function* watchAdd() {
 export function* watchDel() {
 	yield takeEvery('DELETE_DATA_REQUEST', delData);
 }
-export function* watchIsActive() {
-	yield takeEvery('REQUEST_CHANGE_ISACTIVE', changeIsActive);
+export function* watchUpdateData() {
+	yield takeEvery('UPDATE_DATA_REQUEST', updateData);
 }

@@ -1,9 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import { Button, Checkbox, Image, Space, Table } from 'antd';
+import { Button, Checkbox, Image, Space, Table, Tag } from 'antd';
 import { useDispatch, useSelector } from 'react-redux';
-import { delData, getData, changeIsActive } from '../redux/actions/action';
+import { delData, getData, updateData } from '../redux/actions/action';
 import Modals from './Modals';
-import { LoadingOutlined, PlusOutlined } from '@ant-design/icons';
+import {
+	LoadingOutlined,
+	PlusOutlined,
+	SearchOutlined,
+} from '@ant-design/icons';
 import {
 	Modal,
 	Form,
@@ -16,18 +20,31 @@ import {
 	List,
 } from 'antd';
 import ModalConfirm from './ModalConfirm';
+import moment from 'moment';
+import 'moment/locale/id';
 
 const TableData = () => {
-	const { data, Isloading } = useSelector((state) => state.dataReducers);
+	const { data } = useSelector((state) => state.dataReducers);
+	const [form] = Form.useForm();
+	const sorter = (a, b) =>
+		isNaN(a) && isNaN(b) ? (a || '').localeCompare(b || '') : a - b;
+
 	const [openEdit, setopenEdit] = useState(false);
 	const [loading, setloading] = useState(false);
 	const [isDelete, setIsDelete] = useState({
 		show: false,
 		id: null,
 	});
+	const [isEdit, setisEdit] = useState({
+		show: false,
+		id: null,
+	});
+	const [dataEdit, setDataEdit] = useState({});
 	const dispatch = useDispatch();
 	useEffect(() => {
+		setloading(true);
 		dispatch(getData());
+		setloading(false);
 	}, [dispatch]);
 	const [pictureUrl, setPictureUrl] = useState('');
 	const dummyRequest = ({ file, onSuccess }) => {
@@ -36,21 +53,63 @@ const TableData = () => {
 		}, 0);
 	};
 
-	const open = () => {
-		setopenEdit(true);
+	const open = (data, id) => {
+		setTimeout(() => {
+			form.setFieldsValue({
+				id: data.id,
+				name: data.name,
+				qty: data.qty,
+				picture: data.picture,
+				expiredAt: moment(data.expiredAt),
+				isActive: data.isActive,
+			});
+		}, 0);
+		setopenEdit(true, id);
+	};
+
+	const close = () => {
+		setopenEdit(false);
+	};
+
+	// Edit Data
+	const submitEdit = (value) => {
+		let data = {
+			id: value.id,
+			name: value.name,
+			qty: value.qty,
+			picture: pictureUrl,
+			expiredAt: value.expiredAt,
+			isActive: value.isActive,
+		};
+		setisEdit({
+			show: true,
+			id: null,
+		});
+		dispatch(updateData(data, value.id));
+		console.log(data);
+		setopenEdit(false);
 	};
 
 	//  Delete
-	const deleteTask = (id) => {
-		// const {id} = isId;
-		dispatch(delData(id));
+	const deleteTask = (value) => {
+		let data = {
+			id: value,
+			isActive: false,
+		};
+		dispatch(delData(data, value));
 		setIsDelete({
 			show: false,
 			id: null,
 		});
 	};
 
-	const openConfirm = (id) => {
+	const openConfirm = (data, id) => {
+		setTimeout(() => {
+			form.setFieldsValue({
+				id: data.id,
+				isActive: data.isActive,
+			});
+		}, 0);
 		setIsDelete({ show: true, id });
 	};
 
@@ -59,87 +118,154 @@ const TableData = () => {
 			show: false,
 			id: null,
 		});
-	};
-	const changeIsActive = () => {
-		dispatch(changeIsActive());
+		setisEdit({
+			show: false,
+			id: null,
+		});
 	};
 
 	const columns = [
 		{
 			title: 'id',
 			dataIndex: 'id',
+			align: 'center',
 			key: 'id',
 			render: (text) => <a>{text}</a>,
-			responsive: ['md'],
+			sorter: (a, b) => sorter(a.qty, b.qty),
+			responsive: ['lg', 'md', 'sm', 'xs'],
 		},
 		{
 			title: 'name',
 			dataIndex: 'name',
+			align: 'center',
 			key: 'name',
-			responsive: ['md'],
+			responsive: ['lg', 'md', 'sm', 'xs'],
+			filterDropdown: ({
+				setSelectedKeys,
+				selectedKeys,
+				confirm,
+				clearFilters,
+			}) => {
+				return (
+					<>
+						<Input
+							autoFocus
+							placeholder='Type text here'
+							value={selectedKeys[0]}
+							onChange={(e) => {
+								setSelectedKeys(e.target.value ? [e.target.value] : []);
+								confirm({ closeDropdown: false });
+							}}
+							onPressEnter={() => {
+								confirm();
+							}}
+							onBlur={() => {
+								confirm();
+							}}
+						></Input>
+						{/* <Space size='small'>
+							<Button type='primary' onClick={() => confirm()}>
+								Search
+							</Button>
+							<Button type='danger' onClick={() => clearFilters()}>
+								Reset
+							</Button>
+						</Space> */}
+					</>
+				);
+			},
+			filterIcon: () => {
+				return <SearchOutlined />;
+			},
+			onFilter: (value, record) => {
+				return record.name.toLowerCase().includes(value.toLowerCase());
+			},
 		},
 		{
 			title: 'qty',
 			dataIndex: 'qty',
+			align: 'center',
 			key: 'qty',
-			responsive: ['lg'],
+			sorter: (a, b) => sorter(a.qty, b.qty),
+			responsive: ['lg', 'md', 'sm', 'xs'],
 		},
 		{
 			title: 'picture',
 			dataIndex: 'picture',
+			align: 'center',
 			key: 'picture',
 			render: (picture) => (
 				<Image width={50} src={picture} alt={'picture'}></Image>
 			),
-			responsive: ['md'],
+			responsive: ['lg', 'md', 'sm', 'xs'],
 		},
 		{
 			title: 'expiredAt',
 			dataIndex: 'expiredAt',
+			align: 'center',
 			key: 'expiredAt',
-			// render: (text) => moment(text).format('LLLL'),
-			// sorter: (a, b) => sorter(a.dateCreated, b.dateCreated),
-			sortDirections: ['descend', 'ascend'],
-			responsive: ['md'],
+			render: (text) => moment(text).format('LL'),
+			sorter: (a, b) => sorter(a.expiredAt, b.expiredAt),
+			responsive: ['lg', 'md', 'sm', 'xs'],
 		},
 		{
-			title: 'isActive',
+			title: 'Status',
 			dataIndex: 'isActive',
+			align: 'center',
 			key: 'isActive',
-			responsive: ['sm'],
-			render: (countInStock) => (
+			responsive: ['lg', 'md', 'sm', 'xs'],
+			render: (isActive) => (
 				<>
-					{countInStock !== false ? (
-						<Checkbox checked={true} onChange={() => changeIsActive()} />
+					{isActive !== false ? (
+						<Tag color={'green'}>Active</Tag>
 					) : (
-						<Checkbox checked={false} disabled />
+						<Tag color={'volcano'}>Inactive</Tag>
 					)}
 				</>
 			),
+			filters: [
+				{ text: 'Active', value: true },
+				{ text: 'Inactive', value: false },
+			],
+			onFilter: (value, record) => {
+				return record.isActive === value;
+			},
 		},
 		{
 			title: 'Action',
 			key: 'action',
-			responsive: ['md'],
-			render: (text, record) => (
-				<Space size='middle'>
-					<Button onClick={open}>Edit</Button>
-					<Button
-						onClick={(e) => {
-							e.stopPropagation();
-							openConfirm(record.id);
-						}}
-					>
-						Delete
-					</Button>
-				</Space>
-			),
+			align: 'center',
+			responsive: ['lg', 'md', 'sm', 'xs'],
+			render: (text, record) => {
+				return (
+					<Space size='small'>
+						<Button
+							type='primary'
+							ghost
+							shape='round'
+							onClick={(e) => {
+								e.stopPropagation();
+								open(record, record.id);
+								setDataEdit(record);
+							}}
+						>
+							Edit
+						</Button>
+						<Button
+							danger={true}
+							shape='round'
+							onClick={(e) => {
+								e.stopPropagation();
+								openConfirm(record, record.id);
+							}}
+						>
+							Delete
+						</Button>
+					</Space>
+				);
+			},
 		},
 	];
-
-	const close = () => {
-		setopenEdit(false);
-	};
 
 	//getBase64
 	const getBase64 = (img, callback) => {
@@ -180,23 +306,10 @@ const TableData = () => {
 	//Button Upload
 	const uploadButton = (
 		<div>
-			{Isloading ? <LoadingOutlined /> : <PlusOutlined />}
+			{setloading ? <LoadingOutlined /> : <PlusOutlined />}
 			<div style={{ marginTop: 8 }}>Upload</div>
 		</div>
 	);
-
-	// Edit Data
-	const submitEdit = (value) => {
-		let data = {
-			name: value.name,
-			qty: value.qty,
-			picture: pictureUrl,
-			expiredAt: value.expiredAt,
-			isActive: value.isActive,
-		};
-		setopenEdit(false);
-		// dispatch(addData(data));
-	};
 
 	return (
 		<div>
@@ -205,8 +318,11 @@ const TableData = () => {
 				openIsDelete={isDelete}
 				closed={closeConfirmModal}
 				deleted={deleteTask}
+				openIsEdit={isEdit}
+				edited={submitEdit}
 			/>
 			<Modal
+				destroyOnClose={true}
 				closable={false}
 				width='50vw'
 				title='Edit Data'
@@ -216,6 +332,7 @@ const TableData = () => {
 			>
 				<Row type='flex' justify='center' style={{ minHeight: '50vh' }}>
 					<Form
+						form={form}
 						onFinish={submitEdit}
 						labelCol={{
 							span: 4,
@@ -232,6 +349,14 @@ const TableData = () => {
 						// 	isActive: data.isActive,
 						// }}
 					>
+						<Form.Item name='id'>
+							<Input
+								style={{ textAlign: 'center', fontWeight: 'bolder' }}
+								type='text'
+								disabled
+								size='small'
+							/>
+						</Form.Item>
 						<List
 							header={<div>Name</div>}
 							size='default'
@@ -255,8 +380,9 @@ const TableData = () => {
 							size='default'
 							style={{ backgroundColor: '#ffffff' }}
 						>
-							<Form.Item name='picture'>
+							<Form.Item name='picture' valuePropName=' fileList'>
 								<Upload
+									onRemove={close}
 									listType='picture-card'
 									className='avatar-uploader'
 									showUploadList={false}
@@ -264,9 +390,9 @@ const TableData = () => {
 									onChange={handleChangeImage}
 									customRequest={dummyRequest}
 								>
-									{pictureUrl ? (
+									{dataEdit.picture ? (
 										<img
-											src={pictureUrl}
+											src={dataEdit.picture}
 											alt='avatar'
 											style={{ maxWidth: '100%', maxHeight: '100%' }}
 										/>
@@ -291,7 +417,10 @@ const TableData = () => {
 							style={{ backgroundColor: '#ffffff' }}
 						>
 							<Form.Item name='isActive' valuePropName='checked'>
-								<Checkbox />
+								<Checkbox
+									checked={dataEdit.isActive}
+									defaultChecked={dataEdit.isActive}
+								/>
 							</Form.Item>
 						</List>
 						<Button
@@ -315,7 +444,16 @@ const TableData = () => {
 				</Row>
 			</Modal>
 			<Modals />
-			<Table key={data.id} columns={columns} dataSource={data} />
+			<Table
+				bordered
+				scroll={{ x: 'max-content' }}
+				columns={columns}
+				dataSource={loading ? [] : data}
+				locale={{
+					emptyText: setloading ? <LoadingOutlined /> : null,
+				}}
+				rowKey='id'
+			/>
 		</div>
 	);
 };

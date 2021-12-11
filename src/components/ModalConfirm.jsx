@@ -1,8 +1,13 @@
 import { Modal } from 'antd';
 import React from 'react';
 
-// eslint-disable-next-line react/prop-types
-const ModalConfirm = ({ openIsDelete, closed, deleted }) => {
+const ModalConfirm = ({
+	openIsDelete,
+	closed,
+	deleted,
+	openIsEdit,
+	edited,
+}) => {
 	if (openIsDelete.show && openIsDelete.id) {
 		return (
 			<Modal
@@ -12,7 +17,23 @@ const ModalConfirm = ({ openIsDelete, closed, deleted }) => {
 				onCancel={closed}
 				onOk={() => deleted(openIsDelete.id)}
 			>
-				<p style={{ textAlign: 'center' }}>Anda yakin? data akan di hapus.</p>
+				<p style={{ textAlign: 'center' }}>
+					Are you sure? data will be deleted.
+				</p>
+			</Modal>
+		);
+	} else if (openIsEdit.show && openIsEdit.id) {
+		return (
+			<Modal
+				centered
+				visible={openIsEdit}
+				closable={false}
+				onCancel={closed}
+				onOk={() => edited(openIsEdit.id)}
+			>
+				<p style={{ textAlign: 'center' }}>
+					Are you sure? data will be deleted.
+				</p>
 			</Modal>
 		);
 	} else {

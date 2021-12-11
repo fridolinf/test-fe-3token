@@ -11,7 +11,6 @@ import {
 	message,
 	Checkbox,
 	Row,
-	Col,
 	List,
 } from 'antd';
 import { addData } from '../redux/actions/action';
@@ -27,12 +26,18 @@ const Modals = () => {
 			onSuccess('ok');
 		}, 0);
 	};
+	const [form] = Form.useForm();
 
 	const open = () => {
+		form.setFieldsValue({
+			picture: setPictureUrl(),
+			isActive: true,
+		});
 		setopenModal(true);
 	};
 
 	const close = () => {
+		form.resetFields();
 		setopenModal(false);
 	};
 
@@ -89,20 +94,9 @@ const Modals = () => {
 			expiredAt: value.expiredAt,
 			isActive: value.isActive,
 		};
-		setopenModal(false);
 		dispatch(addData(data));
-	};
-	// Edit Data
-	const submitEdit = (value) => {
-		let data = {
-			name: value.name,
-			qty: value.qty,
-			picture: pictureUrl,
-			expiredAt: value.expiredAt,
-			isActive: value.isActive,
-		};
+		form.resetFields();
 		setopenModal(false);
-		dispatch(addData(data));
 	};
 
 	return (
@@ -111,15 +105,18 @@ const Modals = () => {
 				Tambah Data
 			</Button>
 			<Modal
+				forceRender
+				destroyOnClose={true}
 				closable={false}
 				width='50vw'
-				title='Vertically centered modal dialog'
+				title='Add Data'
 				centered
 				visible={openModal}
 				footer={null}
 			>
 				<Row type='flex' justify='center' style={{ minHeight: '50vh' }}>
 					<Form
+						form={form}
 						onFinish={submit}
 						labelCol={{
 							span: 4,
@@ -152,7 +149,7 @@ const Modals = () => {
 							size='default'
 							style={{ backgroundColor: '#ffffff' }}
 						>
-							<Form.Item name='picture'>
+							<Form.Item name='picture' valuePropName=' fileList'>
 								<Upload
 									listType='picture-card'
 									className='avatar-uploader'
@@ -187,8 +184,8 @@ const Modals = () => {
 							size='default'
 							style={{ backgroundColor: '#ffffff' }}
 						>
-							<Form.Item name='isActive' valuePropName='checked'>
-								<Checkbox />
+							<Form.Item name='isActive'>
+								<Checkbox checked={true} disabled={true} />
 							</Form.Item>
 						</List>
 						<Button

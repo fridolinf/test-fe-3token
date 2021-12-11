@@ -23,6 +23,7 @@
     "react/react-in-jsx-scope": "off",
     "no-console": "warn",
     "react/prop-types": "warn",
+    "no-undef":"warn",
     "prettier/prettier":[
       "error",
       {
