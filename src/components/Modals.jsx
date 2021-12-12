@@ -88,6 +88,7 @@ const Modals = () => {
 	// Tambah Data
 	const submit = (value) => {
 		let data = {
+			id: value.id,
 			name: value.name,
 			qty: value.qty,
 			picture: pictureUrl,

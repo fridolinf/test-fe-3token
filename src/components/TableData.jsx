@@ -28,14 +28,14 @@ const TableData = () => {
 	const [form] = Form.useForm();
 	const sorter = (a, b) =>
 		isNaN(a) && isNaN(b) ? (a || '').localeCompare(b || '') : a - b;
-
+	const [pictureUrl, setPictureUrl] = useState('');
 	const [openEdit, setopenEdit] = useState(false);
 	const [loading, setloading] = useState(false);
 	const [isDelete, setIsDelete] = useState({
 		show: false,
 		id: null,
 	});
-	const [isEdit, setisEdit] = useState({
+	const [isEdit, setIsEdit] = useState({
 		show: false,
 		id: null,
 	});
@@ -46,7 +46,6 @@ const TableData = () => {
 		dispatch(getData());
 		setloading(false);
 	}, [dispatch]);
-	const [pictureUrl, setPictureUrl] = useState('');
 	const dummyRequest = ({ file, onSuccess }) => {
 		setTimeout(() => {
 			onSuccess('ok');
@@ -59,16 +58,17 @@ const TableData = () => {
 				id: data.id,
 				name: data.name,
 				qty: data.qty,
-				picture: data.picture,
 				expiredAt: moment(data.expiredAt),
 				isActive: data.isActive,
 			});
+			console.log(data.picture, 'open edit');
 		}, 0);
 		setopenEdit(true, id);
 	};
 
-	const close = () => {
+	const close = (data) => {
 		setopenEdit(false);
+		console.log(data.picture, 'close edit');
 	};
 
 	// Edit Data
@@ -81,12 +81,10 @@ const TableData = () => {
 			expiredAt: value.expiredAt,
 			isActive: value.isActive,
 		};
-		setisEdit({
-			show: true,
-			id: null,
-		});
+		setIsEdit({ show: true, id: value.id });
+		console.log(data.picture, submitEdit);
 		dispatch(updateData(data, value.id));
-		console.log(data);
+		console.log(data.picture, 'after change dispatch');
 		setopenEdit(false);
 	};
 
@@ -118,7 +116,7 @@ const TableData = () => {
 			show: false,
 			id: null,
 		});
-		setisEdit({
+		setIsEdit({
 			show: false,
 			id: null,
 		});
@@ -283,7 +281,6 @@ const TableData = () => {
 		}
 		if (info.file.status === 'done') {
 			await getBase64(info.file.originFileObj, (imageUrl) => {
-				// this.setState({ loading: false, imageUrl1: imageUrl });
 				setloading(false);
 				setPictureUrl(imageUrl);
 			});
@@ -313,7 +310,6 @@ const TableData = () => {
 
 	return (
 		<div>
-			{/* <Button>Tambah Data</Button> */}
 			<ModalConfirm
 				openIsDelete={isDelete}
 				closed={closeConfirmModal}
@@ -382,10 +378,8 @@ const TableData = () => {
 						>
 							<Form.Item name='picture' valuePropName=' fileList'>
 								<Upload
-									onRemove={close}
 									listType='picture-card'
 									className='avatar-uploader'
-									showUploadList={false}
 									beforeUpload={beforeUpload}
 									onChange={handleChangeImage}
 									customRequest={dummyRequest}

@@ -32,7 +32,7 @@ const ModalConfirm = ({
 				onOk={() => edited(openIsEdit.id)}
 			>
 				<p style={{ textAlign: 'center' }}>
-					Are you sure? data will be deleted.
+					Are you sure? data will be updated.
 				</p>
 			</Modal>
 		);
