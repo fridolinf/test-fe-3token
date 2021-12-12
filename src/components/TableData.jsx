@@ -313,7 +313,6 @@ const TableData = () => {
 			<div style={{ marginTop: 8 }}>Upload</div>
 		</div>
 	);
-
 	return (
 		<div>
 			<ModalConfirm
@@ -323,6 +322,120 @@ const TableData = () => {
 				openIsEdit={isEdit}
 				edited={submitEdit}
 			/>
+			<Modal
+				destroyOnClose={true}
+				closable={false}
+				width='50vw'
+				title='Edit Data'
+				centered
+				visible={openEdit}
+				footer={null}
+			>
+				<Row type='flex' justify='center' style={{ minHeight: '50vh' }}>
+					<Form
+						form={form}
+						onFinish={submitEdit}
+						labelCol={{
+							span: 4,
+						}}
+						wrapperCol={{
+							span: 14,
+						}}
+						autoComplete='off'
+					>
+						<Form.Item name='id'>
+							<Input
+								style={{ textAlign: 'center', fontWeight: 'bolder' }}
+								type='text'
+								disabled
+								size='small'
+							/>
+						</Form.Item>
+						<List
+							header={<div>Name</div>}
+							size='default'
+							style={{ backgroundColor: '#ffffff' }}
+						>
+							<Form.Item name='name'>
+								<Input type='text' />
+							</Form.Item>
+						</List>
+						<List
+							header={<div>qty</div>}
+							size='default'
+							style={{ backgroundColor: '#ffffff' }}
+						>
+							<Form.Item name='qty'>
+								<InputNumber type='number' />
+							</Form.Item>
+						</List>
+						<List
+							header={<div>picture</div>}
+							size='default'
+							style={{ backgroundColor: '#ffffff' }}
+						>
+							<Form.Item name='picture' valuePropName=' fileList'>
+								<Upload
+									listType='picture-card'
+									className='avatar-uploader'
+									beforeUpload={beforeUpload}
+									onChange={handleChangeImage}
+									customRequest={dummyRequest}
+									maxCount={1}
+								>
+									{dataEdit.picture ? (
+										<img
+											src={dataEdit.picture}
+											alt='avatar'
+											style={{ maxWidth: '100%', maxHeight: '100%' }}
+										/>
+									) : (
+										uploadButton
+									)}
+								</Upload>
+							</Form.Item>
+						</List>
+						<List
+							header={<div>ExpiredAt</div>}
+							size='default'
+							style={{ backgroundColor: '#ffffff' }}
+						>
+							<Form.Item name='expiredAt'>
+								<DatePicker />
+							</Form.Item>
+						</List>
+						<List
+							header={<div>isActive</div>}
+							size='default'
+							style={{ backgroundColor: '#ffffff' }}
+						>
+							<Form.Item name='isActive' valuePropName='checked'>
+								<Checkbox
+									checked={dataEdit.isActive}
+									defaultChecked={dataEdit.isActive}
+								/>
+							</Form.Item>
+						</List>
+						<Button
+							type='primary'
+							style={{ marginRight: '10px' }}
+							htmlType='submit'
+							size='large'
+							shape='round'
+						>
+							Submit
+						</Button>
+						<Button
+							htmlType='button'
+							size='large'
+							shape='round'
+							onClick={close}
+						>
+							Cancel
+						</Button>
+					</Form>
+				</Row>
+			</Modal>
 			<Modals />
 			<Table
 				bordered
