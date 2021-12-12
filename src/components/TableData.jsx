@@ -61,14 +61,12 @@ const TableData = () => {
 				expiredAt: moment(data.expiredAt),
 				isActive: data.isActive,
 			});
-			console.log(data.picture, 'open edit');
 		}, 0);
 		setopenEdit(true, id);
 	};
 
 	const close = (data) => {
 		setopenEdit(false);
-		console.log(data.picture, 'close edit');
 	};
 
 	// Edit Data
@@ -77,14 +75,12 @@ const TableData = () => {
 			id: value.id,
 			name: value.name,
 			qty: value.qty,
-			picture: pictureUrl,
+			picture: dataEdit.picture,
 			expiredAt: value.expiredAt,
 			isActive: value.isActive,
 		};
 		setIsEdit({ show: true, id: value.id });
-		console.log(data.picture, submitEdit);
 		dispatch(updateData(data, value.id));
-		console.log(data.picture, 'after change dispatch');
 		setopenEdit(false);
 	};
 
@@ -102,13 +98,13 @@ const TableData = () => {
 	};
 
 	const openConfirm = (data, id) => {
+		setIsDelete({ show: true, id });
 		setTimeout(() => {
 			form.setFieldsValue({
 				id: data.id,
 				isActive: data.isActive,
 			});
 		}, 0);
-		setIsDelete({ show: true, id });
 	};
 
 	const closeConfirmModal = () => {
@@ -120,6 +116,16 @@ const TableData = () => {
 			show: false,
 			id: null,
 		});
+		setTimeout(() => {
+			form.setFieldsValue({
+				id: '',
+				name: '',
+				qty: '',
+				picture: '',
+				expiredAt: '',
+				isActive: '',
+			});
+		}, 0);
 	};
 
 	const columns = [
@@ -293,9 +299,9 @@ const TableData = () => {
 		if (!isJpgOrPng) {
 			message.error('Hanya bisa upload file jpg/jpeg/png!');
 		}
-		const isLt2M = file.size / 1024 / 1024 < 2;
+		const isLt2M = file.size / 100 / 100 < 2;
 		if (!isLt2M) {
-			message.error('Gambar tidak bisa lebih dari 2MB!');
+			message.error('Gambar tidak bisa lebih dari 100kb!');
 		}
 		return isJpgOrPng && isLt2M;
 	};
@@ -317,126 +323,6 @@ const TableData = () => {
 				openIsEdit={isEdit}
 				edited={submitEdit}
 			/>
-			<Modal
-				destroyOnClose={true}
-				closable={false}
-				width='50vw'
-				title='Edit Data'
-				centered
-				visible={openEdit}
-				footer={null}
-			>
-				<Row type='flex' justify='center' style={{ minHeight: '50vh' }}>
-					<Form
-						form={form}
-						onFinish={submitEdit}
-						labelCol={{
-							span: 4,
-						}}
-						wrapperCol={{
-							span: 14,
-						}}
-						autoComplete='off'
-						// initialValues={{
-						// 	name: data.name,
-						// 	qty: data.qty,
-						// 	picture: data.picture,
-						// 	expiredAt: data.expiredAt,
-						// 	isActive: data.isActive,
-						// }}
-					>
-						<Form.Item name='id'>
-							<Input
-								style={{ textAlign: 'center', fontWeight: 'bolder' }}
-								type='text'
-								disabled
-								size='small'
-							/>
-						</Form.Item>
-						<List
-							header={<div>Name</div>}
-							size='default'
-							style={{ backgroundColor: '#ffffff' }}
-						>
-							<Form.Item name='name'>
-								<Input type='text' />
-							</Form.Item>
-						</List>
-						<List
-							header={<div>qty</div>}
-							size='default'
-							style={{ backgroundColor: '#ffffff' }}
-						>
-							<Form.Item name='qty'>
-								<InputNumber type='number' />
-							</Form.Item>
-						</List>
-						<List
-							header={<div>picture</div>}
-							size='default'
-							style={{ backgroundColor: '#ffffff' }}
-						>
-							<Form.Item name='picture' valuePropName=' fileList'>
-								<Upload
-									listType='picture-card'
-									className='avatar-uploader'
-									beforeUpload={beforeUpload}
-									onChange={handleChangeImage}
-									customRequest={dummyRequest}
-								>
-									{dataEdit.picture ? (
-										<img
-											src={dataEdit.picture}
-											alt='avatar'
-											style={{ maxWidth: '100%', maxHeight: '100%' }}
-										/>
-									) : (
-										uploadButton
-									)}
-								</Upload>
-							</Form.Item>
-						</List>
-						<List
-							header={<div>ExpiredAt</div>}
-							size='default'
-							style={{ backgroundColor: '#ffffff' }}
-						>
-							<Form.Item name='expiredAt'>
-								<DatePicker />
-							</Form.Item>
-						</List>
-						<List
-							header={<div>isActive</div>}
-							size='default'
-							style={{ backgroundColor: '#ffffff' }}
-						>
-							<Form.Item name='isActive' valuePropName='checked'>
-								<Checkbox
-									checked={dataEdit.isActive}
-									defaultChecked={dataEdit.isActive}
-								/>
-							</Form.Item>
-						</List>
-						<Button
-							type='primary'
-							style={{ marginRight: '10px' }}
-							htmlType='submit'
-							size='large'
-							shape='round'
-						>
-							Submit
-						</Button>
-						<Button
-							htmlType='button'
-							size='large'
-							shape='round'
-							onClick={close}
-						>
-							Cancel
-						</Button>
-					</Form>
-				</Row>
-			</Modal>
 			<Modals />
 			<Table
 				bordered

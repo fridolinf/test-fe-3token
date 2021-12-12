@@ -70,9 +70,9 @@ const Modals = () => {
 		if (!isJpgOrPng) {
 			message.error('Hanya bisa upload file jpg/jpeg/png!');
 		}
-		const isLt2M = file.size / 1024 / 1024 < 2;
+		const isLt2M = file.size / 100 / 100 < 2;
 		if (!isLt2M) {
-			message.error('Gambar tidak bisa lebih dari 2MB!');
+			message.error('Gambar tidak bisa lebih dari 100kb!');
 		}
 		return isJpgOrPng && isLt2M;
 	};
@@ -132,7 +132,15 @@ const Modals = () => {
 							size='default'
 							style={{ backgroundColor: '#ffffff' }}
 						>
-							<Form.Item name='name'>
+							<Form.Item
+								name='name'
+								rules={[
+									{
+										required: true,
+										message: 'Please input your name',
+									},
+								]}
+							>
 								<Input type='text' />
 							</Form.Item>
 						</List>
@@ -141,7 +149,15 @@ const Modals = () => {
 							size='default'
 							style={{ backgroundColor: '#ffffff' }}
 						>
-							<Form.Item name='qty'>
+							<Form.Item
+								name='qty'
+								rules={[
+									{
+										required: true,
+										message: 'Please input your qty',
+									},
+								]}
+							>
 								<InputNumber type='number' />
 							</Form.Item>
 						</List>
@@ -150,7 +166,16 @@ const Modals = () => {
 							size='default'
 							style={{ backgroundColor: '#ffffff' }}
 						>
-							<Form.Item name='picture' valuePropName=' fileList'>
+							<Form.Item
+								name='picture'
+								valuePropName=' fileList'
+								rules={[
+									{
+										required: true,
+										message: 'Please input your picture',
+									},
+								]}
+							>
 								<Upload
 									listType='picture-card'
 									className='avatar-uploader'
@@ -176,7 +201,15 @@ const Modals = () => {
 							size='default'
 							style={{ backgroundColor: '#ffffff' }}
 						>
-							<Form.Item name='expiredAt'>
+							<Form.Item
+								name='expiredAt'
+								rules={[
+									{
+										required: true,
+										message: 'Please input your expireAt',
+									},
+								]}
+							>
 								<DatePicker />
 							</Form.Item>
 						</List>

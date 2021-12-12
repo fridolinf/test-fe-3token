@@ -19,10 +19,10 @@
         "react"
     ],
     "rules": {
-    "no-unused-vars": "warn",
+    "no-unused-vars": "off",
     "react/react-in-jsx-scope": "off",
     "no-console": "warn",
-    "react/prop-types": "warn",
+    "react/prop-types": "off",
     "no-undef":"warn",
     "prettier/prettier":[
       "error",

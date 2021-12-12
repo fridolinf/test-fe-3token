@@ -12,7 +12,7 @@ function* getData() {
 		yield call(delay, 2000);
 		yield put({ type: 'GET_DATA_SUCCESS', payload: res.data });
 	} catch (e) {
-		console.log(e);
+		e.message;
 	}
 }
 function* addData(actions) {
@@ -24,7 +24,7 @@ function* addData(actions) {
 		yield put({ type: 'ADD_DATA_SUCCESS', payload: res.data.data });
 		yield* getData();
 	} catch (e) {
-		e.res.data;
+		e.message;
 	}
 }
 function* delData(actions) {
@@ -41,7 +41,7 @@ function* delData(actions) {
 		);
 		yield* getData();
 	} catch (e) {
-		console.log(e);
+		e.message;
 	}
 }
 //blom dicoba
@@ -56,7 +56,7 @@ function* updateData(actions) {
 		yield put({ type: 'UPDATE_DATA_SUCCESS', payload: res.data });
 		yield* getData();
 	} catch (e) {
-		console.log(e);
+		e.message;
 	}
 }
 //blomdicoba
