@@ -69,7 +69,6 @@ const TableData = () => {
 		setopenEdit(false);
 	};
 
-	// Edit Data
 	const submitEdit = (value) => {
 		let data = {
 			id: value.id,
@@ -84,7 +83,6 @@ const TableData = () => {
 		setopenEdit(false);
 	};
 
-	//  Delete
 	const deleteTask = (value) => {
 		let data = {
 			id: value,
@@ -271,7 +269,6 @@ const TableData = () => {
 		},
 	];
 
-	//getBase64
 	const getBase64 = (img, callback) => {
 		const reader = new FileReader();
 		reader.addEventListener('load', () => callback(reader.result));
@@ -279,7 +276,6 @@ const TableData = () => {
 		return false;
 	};
 
-	// Handle image 1
 	const handleChangeImage = async (info) => {
 		if (info.file.status === 'uploading') {
 			setloading(true);
@@ -293,7 +289,6 @@ const TableData = () => {
 		}
 	};
 
-	//beforeUpload
 	const beforeUpload = (file) => {
 		const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
 		if (!isJpgOrPng) {
@@ -306,7 +301,6 @@ const TableData = () => {
 		return isJpgOrPng && isLt2M;
 	};
 
-	//Button Upload
 	const uploadButton = (
 		<div>
 			{setloading ? <LoadingOutlined /> : <PlusOutlined />}

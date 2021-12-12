@@ -3,7 +3,6 @@ import axios from 'axios';
 import { api } from '../../service/api';
 
 function* getData() {
-	// const token = localStorage.getItem('token');
 	try {
 		const res = yield axios.get(`${api.getProducts()}`, {
 			headers: { 'Content-Type': 'application/json' },
@@ -44,7 +43,6 @@ function* delData(actions) {
 		e.message;
 	}
 }
-//blom dicoba
 function* updateData(actions) {
 	let data = actions.payload;
 	try {
@@ -59,7 +57,6 @@ function* updateData(actions) {
 		e.message;
 	}
 }
-//blomdicoba
 
 export function* watchGet() {
 	yield takeEvery('GET_DATA_REQUEST', getData);

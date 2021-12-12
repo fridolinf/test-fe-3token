@@ -41,7 +41,6 @@ const Modals = () => {
 		setopenModal(false);
 	};
 
-	//getBase64
 	const getBase64 = (img, callback) => {
 		const reader = new FileReader();
 		reader.addEventListener('load', () => callback(reader.result));
@@ -49,7 +48,6 @@ const Modals = () => {
 		return false;
 	};
 
-	// Handle image 1
 	const handleChangeImage = async (info) => {
 		if (info.file.status === 'uploading') {
 			setloading(true);
@@ -57,14 +55,12 @@ const Modals = () => {
 		}
 		if (info.file.status === 'done') {
 			await getBase64(info.file.originFileObj, (imageUrl) => {
-				// this.setState({ loading: false, imageUrl1: imageUrl });
 				setloading(false);
 				setPictureUrl(imageUrl);
 			});
 		}
 	};
 
-	//beforeUpload
 	const beforeUpload = (file) => {
 		const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
 		if (!isJpgOrPng) {
@@ -77,7 +73,6 @@ const Modals = () => {
 		return isJpgOrPng && isLt2M;
 	};
 
-	//Button Upload
 	const uploadButton = (
 		<div>
 			{loading ? <LoadingOutlined /> : <PlusOutlined />}
@@ -85,7 +80,6 @@ const Modals = () => {
 		</div>
 	);
 
-	// Tambah Data
 	const submit = (value) => {
 		let data = {
 			id: value.id,

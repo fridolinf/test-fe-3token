@@ -21,7 +21,6 @@ const FormData = (onConfirm) => {
 		}, 0);
 	};
 
-	//getBase64
 	const getBase64 = (img, callback) => {
 		const reader = new FileReader();
 		reader.addEventListener('load', () => callback(reader.result));
@@ -29,21 +28,18 @@ const FormData = (onConfirm) => {
 		return false;
 	};
 
-	// Handle image 1
 	const handleChangeImage = async (info) => {
 		if (info.file.status === 'uploading') {
 			this.setState({ loading: true });
 			return;
 		}
 		if (info.file.status === 'done') {
-			// Get this url from response in real world.
 			await getBase64(info.file.originFileObj, (imageUrl) => {
 				this.setState({ loading: false, imageUrl1: imageUrl });
 			});
 		}
 	};
 
-	//beforeUpload
 	const beforeUpload = (file) => {
 		const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
 		if (!isJpgOrPng) {
@@ -56,7 +52,6 @@ const FormData = (onConfirm) => {
 		return isJpgOrPng && isLt2M;
 	};
 
-	//Button Upload
 	const uploadButton = (
 		<div>
 			{loading ? <LoadingOutlined /> : <PlusOutlined />}
